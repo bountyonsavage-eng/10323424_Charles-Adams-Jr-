@@ -1,0 +1,96 @@
+import base64
+
+# 1. Caesar Cipher Algorithm
+def caesar_cipher(text: str, shift: int, mode: str = 'encode') -> str:
+    if mode == 'decode':
+        shift = -shift
+    
+    result = []
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            # Shift character and wrap around the 26-letter alphabet
+            shifted = (ord(char) - base + shift) % 26 + base
+            result.append(chr(shifted))
+        else:
+            # Keep spaces, numbers, and punctuation unchanged
+            result.append(char)
+    return ''.join(result)
+
+
+# 2. Vigenère Cipher Algorithm
+def vigenere_cipher(text: str, key: str, mode: str = 'encode') -> str:
+    key = ''.join(filter(str.isalpha, key)).upper()
+    if not key:
+        raise ValueError("Key must contain at least one alphabetic character.")
+    
+    result = []
+    key_index = 0
+    for char in text:
+        if char.isalpha():
+            base = ord('A') if char.isupper() else ord('a')
+            shift = ord(key[key_index % len(key)]) - ord('A')
+            if mode == 'decode':
+                shift = -shift
+                
+            shifted = (ord(char) - base + shift) % 26 + base
+            result.append(chr(shifted))
+            key_index += 1
+        else:
+            result.append(char)
+    return ''.join(result)
+
+
+# 3. Base64 Encoding/Decoding Algorithm
+def base64_cipher(text: str, mode: str = 'encode') -> str:
+    if mode == 'encode':
+        encoded_bytes = base64.b64encode(text.encode('utf-8'))
+        return encoded_bytes.decode('utf-8')
+    elif mode == 'decode':
+        decoded_bytes = base64.b64decode(text.encode('utf-8'))
+        return decoded_bytes.decode('utf-8')
+    else:
+        raise ValueError("Mode must be 'encode' or 'decode'.")
+
+
+# Main Interactive Menu
+def main():
+    while True:
+        print("\n=== Text Encoder & Decoder ===")
+        print("1. Caesar Cipher")
+        print("2. Vigenère Cipher")
+        print("3. Base64")
+        print("4. Exit")
+        
+        choice = input("Select an algorithm (1-4): ").strip()
+        if choice == '4':
+            print("Exiting program.")
+            break
+            
+        if choice not in {'1', '2', '3'}:
+            print("Invalid selection. Please try again.")
+            continue
+            
+        action = input("Type 'encode' or 'decode': ").strip().lower()
+        if action not in {'encode', 'decode'}:
+            print("Invalid action. Please enter 'encode' or 'decode'.")
+            continue
+            
+        message = input("Enter your text: ")
+        
+        try:
+            if choice == '1':
+                shift = int(input("Enter shift key (integer, e.g., 3): "))
+                output = caesar_cipher(message, shift, action)
+            elif choice == '2':
+                key = input("Enter keyword (letters only, e.g., SECRET): ")
+                output = vigenere_cipher(message, key, action)
+            elif choice == '3':
+                output = base64_cipher(message, action)
+                
+            print(f"\nResult ({action}d): {output}")
+        except Exception as e:
+            print(f"\nError: {e}")
+
+if __name__ == "__main__":
+    main()
