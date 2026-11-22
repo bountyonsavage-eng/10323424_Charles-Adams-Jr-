@@ -1,4 +1,4 @@
-# 10323424_Charles-Adams-Jr-
+# 10323424_Charles-Adams
 import base64
 
 # 1. Caesar Cipher Algorithm
